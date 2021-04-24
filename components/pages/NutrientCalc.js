@@ -32,7 +32,7 @@ export default () => {
       })}
       ${cpInput({
         id: "per",
-        name: "成分表示の基準量",
+        name: "成分表示の基準量 (栄養成分表示 ** g 当たり)",
         suffix: "g",
         setter: setPer,
         caption: per,
