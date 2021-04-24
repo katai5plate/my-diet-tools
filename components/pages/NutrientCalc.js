@@ -1,10 +1,13 @@
 import { html, cp, hooks } from "../../preact.js";
 import Input from "../parts/Input.js";
+import Table from "../parts/Table.js";
 
 const { useState } = hooks;
 
 /** @type {CP<typeof Input>} */
 const cpInput = cp(Input);
+/** @type {CP<typeof Table>} */
+const cpTable = cp(Table);
 
 export default () => {
   const [capacity, setCapacity] = useState(0);
@@ -116,22 +119,16 @@ export default () => {
       ${nutrients.map(({ result, ...rest }) =>
         cpInput({ caption: `結果: ${positive(result) * rate}`, ...rest })
       )}
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">栄養素</th>
-            <th scope="col">数</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${nutrients.map(
-            ({ name, result, suffix }) => html`<tr>
-              <th scope="row">${name}</th>
-              <td>${result} ${suffix}</td>
-            </tr>`
-          )}
-        </tbody>
-      </table>
+      ${cpTable({
+        labelColumn: true,
+        list: [
+          ["栄養素", "数"],
+          ...nutrients.map(({ name, result, suffix }) => [
+            name,
+            `${result} ${suffix}`,
+          ]),
+        ],
+      })}
     </div>
   `;
 };
