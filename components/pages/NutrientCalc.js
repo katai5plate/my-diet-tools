@@ -18,94 +18,120 @@ export default () => {
   const [sugar, setSuger] = useState(0);
   const [fiber, setFiber] = useState(0);
   const [salt, setSalt] = useState(0);
-  const calcRate = () => (capacity / per) * alloc;
-  const calcSuger = () => (energy - protein * 4 - fat * 9) / 4;
+
+  const positive = (x) => (x < 0 ? 0 : x);
+
+  const rate = (capacity / per) * alloc;
+  const calcSuger = positive((energy - protein * 4 - fat * 9) / 4);
+  const calcFiber = positive(carbo - calcSuger);
+
+  const capacities = [
+    {
+      id: "capacity",
+      name: "測る量",
+      suffix: "g",
+      setter: setCapacity,
+      tabindex: 1,
+    },
+    {
+      id: "per",
+      name: "成分表示の基準量 (栄養成分表示 ** g 当たり)",
+      suffix: "g",
+      setter: setPer,
+      tabindex: 1,
+    },
+    {
+      id: "alloc",
+      name: "配分率",
+      prefix: "x",
+      setter: setAlloc,
+      initial: defaultAlloc,
+      tabindex: 1,
+    },
+  ];
+  const nutrients = [
+    {
+      id: "energy",
+      name: "エネルギー",
+      suffix: "kcal",
+      setter: setEnergy,
+      result: energy,
+      tabindex: 1,
+    },
+    {
+      id: "protein",
+      name: "タンパク質",
+      suffix: "g",
+      setter: setProtein,
+      result: protein,
+      tabindex: 1,
+    },
+    {
+      id: "fat",
+      name: "脂質",
+      suffix: "g",
+      setter: setFat,
+      result: fat,
+      tabindex: 1,
+    },
+    {
+      id: "carbo",
+      name: "炭水化物",
+      suffix: "g",
+      setter: setCarbo,
+      result: carbo,
+      tabindex: 1,
+    },
+    {
+      id: "sugar",
+      name: "糖質",
+      suffix: "g",
+      indent: true,
+      setter: setSuger,
+      result: sugar || calcSuger,
+      tabindex: 2,
+    },
+    {
+      id: "fiber",
+      name: "食物繊維",
+      suffix: "g",
+      indent: true,
+      setter: setFiber,
+      result: fiber || calcFiber,
+      tabindex: 2,
+    },
+    {
+      id: "salt",
+      name: "塩分",
+      suffix: "g",
+      setter: setSalt,
+      result: salt,
+      tabindex: 1,
+    },
+  ];
   return html`
     <div class="row">
-      ${cpInput({
-        id: "capacity",
-        name: "測る量",
-        suffix: "g",
-        setter: setCapacity,
-        caption: capacity,
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "per",
-        name: "成分表示の基準量 (栄養成分表示 ** g 当たり)",
-        suffix: "g",
-        setter: setPer,
-        caption: per,
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "alloc",
-        name: "配分率",
-        prefix: "x",
-        setter: setAlloc,
-        caption: alloc,
-        initial: defaultAlloc,
-        tabindex: 1,
-      })}
-      <div class="form-text mb-3">レート: ${calcRate()}</div>
-      ${cpInput({
-        id: "energy",
-        name: "エネルギー",
-        suffix: "kcal",
-        setter: setEnergy,
-        caption: energy * calcRate(),
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "protein",
-        name: "タンパク質",
-        suffix: "g",
-        setter: setProtein,
-        caption: protein * calcRate(),
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "fat",
-        name: "脂質",
-        suffix: "g",
-        setter: setFat,
-        caption: fat * calcRate(),
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "carbo",
-        name: "炭水化物",
-        suffix: "g",
-        setter: setCarbo,
-        caption: carbo * calcRate(),
-        tabindex: 1,
-      })}
-      ${cpInput({
-        id: "sugar",
-        name: "糖質",
-        suffix: "g",
-        indent: true,
-        setter: setSuger,
-        caption: (sugar || calcSuger()) * calcRate(),
-        tabindex: 2,
-      })}
-      ${cpInput({
-        id: "fiber",
-        name: "食物繊維",
-        suffix: "g",
-        indent: true,
-        setter: setFiber,
-        caption: (fiber || carbo - calcSuger()) * calcRate(),
-        tabindex: 2,
-      })}
-      ${cpInput({
-        id: "salt",
-        name: "塩分",
-        suffix: "g",
-        setter: setSalt,
-        caption: salt * calcRate(),
-        tabindex: 1,
-      })}
+      ${capacities.map(cpInput)}
+      <div class="form-text mb-3">レート: ${rate}</div>
+      ${nutrients.map(({ result, ...rest }) =>
+        cpInput({ caption: `結果: ${positive(result) * rate}`, ...rest })
+      )}
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">栄養素</th>
+            <th scope="col">数</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${nutrients.map(
+            ({ name, result, suffix }) => html`<tr>
+              <th scope="row">${name}</th>
+              <td>${result} ${suffix}</td>
+            </tr>`
+          )}
+        </tbody>
+      </table>
     </div>
   `;
 };
