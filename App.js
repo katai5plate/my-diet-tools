@@ -4,9 +4,9 @@ import Nav from "./components/parts/Nav.js";
 
 const { useState } = hooks;
 
-/** @type {CP<typeof html, typeof NutrientCalc>} */
+/** @type {CP<typeof NutrientCalc>} */
 const cpNutrientCalc = cp(NutrientCalc);
-/** @type {CP<typeof html, typeof Nav>} */
+/** @type {CP<typeof Nav>} */
 const cpNav = cp(Nav);
 
 export default () => {

@@ -3,7 +3,7 @@ import Input from "../parts/Input.js";
 
 const { useState } = hooks;
 
-/** @type {CP<typeof html, typeof Input>} */
+/** @type {CP<typeof Input>} */
 const cpInput = cp(Input);
 
 export default () => {
