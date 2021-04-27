@@ -125,7 +125,7 @@ export default () => {
           ["栄養素", "数"],
           ...nutrients.map(({ name, result, suffix }) => [
             name,
-            `${result} ${suffix}`,
+            `${positive(result) * rate} ${suffix}`,
           ]),
         ],
       })}
